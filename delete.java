@@ -1,29 +1,27 @@
-public class delete {
-    int array[] = {2,3,6,7,9,10};
-    int i;
-    int delete=3;
+import java.util.Arrays;
 
-void deleteit(){
-    for (i=0;i<array.length;i++){
-        if(delete==array[i]){
-            for (int j=i;j<array.length-1;j++){
-                array[j]=array[j+1];
+
+
+ public class delete{
+    int[] names = {2,3,6,7,9,10};
+    int deleteIndex = 3;
+    int arraySize = names.length;
+    void deleteName() {
+        int[] updatedNames = new int[arraySize - 1];
+        for (int i = 0, j = 0; i < arraySize; i++) {
+            if (i != deleteIndex) {
+                updatedNames[j++] = names[i];
             }
-            break;
+        }
+        int elementmove = arraySize - deleteIndex - 1;
 
-        }
-        for( i=0; i<array.length-1;i++){
-            System.out.print(array[i]+",");
-        }
+        System.out.println("Updated array after deletion: " + Arrays.toString(updatedNames));
 
     }
-
-
-}
 
     public static void main(String[] args) {
-        delete obj= new delete();
-        obj.deleteit();
+        delete program = new delete();
+        program.deleteName();
     }
-
 }
+
