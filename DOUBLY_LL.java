@@ -22,6 +22,22 @@ public class DOUBLY_LL {
             System.out.println();
         }
 
+    public  static void reverseit(Node head) {
+        Node prev = null;
+        Node current = head;
+        Node next = null;
+
+        while (current != null) {
+            next = current.next; // Store next node
+            current.next = prev; // Reverse current node's pointer
+            prev = current;      // Move pointers one position ahead
+            current = next;
+        }
+        head = prev; // Update head to the new first node
+
+
+    }
+
 
 
 
@@ -39,6 +55,9 @@ public class DOUBLY_LL {
            c.next=d;
            d.prev=c;
         printit(a);
+        reverseit(a);
+        printit(d);
+
 
 
 
