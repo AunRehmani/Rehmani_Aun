@@ -70,6 +70,7 @@ public static void insertattail(Node head, int data) {
             current = current.next;
         }
         current.next = newnode;
+        newnode.prev=current;
 
     }
     System.out.println(newnode);
