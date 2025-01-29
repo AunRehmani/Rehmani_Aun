@@ -1,0 +1,460 @@
+import java.util.Scanner;
+
+class User {
+    String username;
+    String password;
+    LinkedList inventory; // User's inventory of NFTs
+
+    User(String username, String password) {
+        this.username = username;
+        this.password = password;
+        this.inventory = new LinkedList(); // Initialize inventory
+    }
+}
+
+class NFT {
+    String name;
+    double price;
+
+    NFT(String name, double price) {
+        this.name = name;
+        this.price = price;
+    }
+
+    @Override
+    public String toString() {
+        return "NFT Name: " + name + ", Price: $" + price;
+    }
+}
+
+class Node {
+    NFT nft;
+    Node next;
+
+    Node(NFT nft) {
+        this.nft = nft;
+        this.next = null;
+    }
+}
+
+class LinkedList {
+    Node head;
+
+    void add(NFT nft) {
+        Node newNode = new Node(nft);
+        if (head == null) {
+            head = newNode;
+        } else {
+            Node current = head;
+            while (current.next != null) {
+                current = current.next;
+            }
+            current.next = newNode;
+        }
+    }
+
+    void display() {
+        Node current = head;
+        while (current != null) {
+            System.out.println(current.nft);
+            current = current.next;
+        }
+    }
+}
+
+class Stack {
+    private NFT[] stack;
+    private int top;
+    private int maxSize;
+
+    Stack(int size) {
+        maxSize = size;
+        stack = new NFT[maxSize];
+        top = -1;
+    }
+
+    void push(NFT nft) {
+        if (top < maxSize - 1) {
+            stack[++top] = nft;
+        } else {
+            System.out.println("Stack is full. Cannot add more NFTs.");
+        }
+    }
+
+    NFT pop() {
+        if (top >= 0) {
+            return stack[top--];
+        } else {
+            System.out.println("Stack is empty. No NFTs to pop.");
+            return null;
+        }
+    }
+
+    boolean isEmpty() {
+        return top == -1;
+    }
+
+    void display() {
+        for (int i = top; i >= 0; i--) {
+            System.out.println(stack[i]);
+        }
+    }
+}
+
+public class UserAccountSystem {
+    private static final int MAX_USERS = 10; // Maximum number of users
+    private static User[] users = new User[MAX_USERS];
+    private static int userCount = 0;
+    private static Stack availableNFTs = new Stack(10); // Stack of available NFTs
+
+    public static void main(String[] args) {
+        initializeNFTs(); // Initialize some NFTs
+        Scanner scanner = new Scanner(System.in);
+        int choice;
+
+        do {
+            System.out.println("1. Create Account");
+            System.out.println("2. Login");
+            System.out.println("3. Exit");
+            System.out.print("Enter your choice: ");
+            choice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+
+            switch (choice) {
+                case 1:
+                    createAccount(scanner);
+                    break;
+                case 2:
+                    login(scanner);
+                    break;
+                case 3:
+                    System.out.println("Exiting...");
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        } while (choice != 3);
+
+        scanner.close();
+    }
+
+    private static void initializeNFTs() {
+        availableNFTs.push(new NFT("CryptoPunk #1", 100.0));
+        availableNFTs.push(new NFT("Bored Ape #2", 200.0));
+        availableNFTs.push(new NFT("Art Block #3", 150.0));
+        availableNFTs.push(new NFT("Decentraland #4", 250.0));
+        availableNFTs.push(new NFT("Axie Infinity #5", 300.0));
+    }
+
+    private static void createAccount(Scanner scanner) {
+        if (userCount >= MAX_USERS) {
+            System.out.println("User  limit reached. Cannot create more accounts.");
+            return;
+        }
+
+        System.out.print("Enter username: ");
+        String username = scanner.nextLine();
+        System.out.print("Enter password: ");
+        String password = scanner.nextLine();
+
+        users[userCount] = new User(username, password);
+        userCount++;
+        System.out.println("Account created successfully!");
+    }
+
+    private static void login(Scanner scanner) {
+        System.out.print("Enter username: ");
+        String username = scanner.nextLine();
+        System.out.print("Enter password: ");
+        String password = scanner.nextLine();
+
+        for (int i = 0; i < userCount; i++) {
+            if (users[i].username
+
+
+
+            if (users[i].username.equals(username) && users[i].password.equals(password)) {
+                System.out.println("Login successful! Welcome, " + username + "!");
+                userMenu(scanner, users[i]);
+                return;
+            }
+        }
+        System.out.println("Invalid username or password. Please try again.");
+    }
+
+    private static void userMenu(Scanner scanner, User user) {
+        int choice;
+        do {
+            System.out.println("\n1. View Available NFTs");
+            System.out.println("2. Buy NFT");
+            System.out.println("3. View My Inventory");
+            System.out.println("4. Logout");
+            System.out.print("Enter your choice: ");
+            choice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+
+            switch (choice) {
+                case 1:
+                    viewAvailableNFTs();
+                    break;
+                case 2:
+                    buyNFT(scanner, user);
+                    break;
+                case 3:
+                    viewInventory(user);
+                    break;
+                case 4:
+                    System.out.println("Logging out...");
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        } while (choice != 4);
+    }
+
+    private static void viewAvailableNFTs() {
+        System.out.println("\nAvailable NFTs:");
+        availableNFTs.display();
+    }
+
+    private static void buyNFT(Scanner scanner, User user) {
+        if (availableNFTs.isEmpty()) {
+            System.out.println("No available NFTs to buy.");
+            return;
+        }
+
+        System.out.println("Enter the name of the NFT you want to buy:");
+        String nftName = scanner.nextLine();
+        NFT nftToBuy = null;
+
+        // Check if the NFT is available
+        for (int i = 0; i < 10; i++) {
+            if (availableNFTs.stack[i] != null && availableNFTs.stack[i].name.equals(nftName)) {
+                nftToBuy = availableNFTs.pop(); // Buy the NFT
+                break;
+            }
+        }
+
+        if (nftToBuy != null) {
+            user.inventory.add(nftToBuy);
+            System.out.println("You have successfully bought: " + nftToBuy);
+        } else {
+            System.out.println("NFT not found.");
+        }
+    }
+
+    private static void viewInventory(User user) {
+        System.out.println("\nYour Inventory:");
+        user.inventory.display();
+    }
+}
+
+
+
+searchfunc():
+
+
+import java.util.Scanner;
+import java.util.Random;
+
+class Node1 {
+    String name;
+    double price;
+    int id;
+    Node1 next;
+
+    Node1(String name, double price, int id) {
+        this.name = name;
+        this.price = price;
+        this.id = id;
+        this.next = null;
+    }
+}
+
+class listing {
+    Node1 head;
+
+    void addnft() {
+        Scanner scan = new Scanner(System.in);
+        System.out.println("---------ADD NFTS-------------------");
+        System.out.println("Give Nft Name:");
+        String name = scan.next();
+        System.out.println("Give Nft Pricing:");
+        double price = scan.nextDouble();
+        System.out.println("--------NFT CREATED SUCCESSFULLY-----");
+        int id = generateRandomId(); // Generate a unique ID
+
+        Node1 newnft = new Node1(name, price, id);
+
+        if (head == null) {
+            head = newnft;
+        } else {
+            // Maintain a sorted linked list based on ID for efficient binary search
+            Node1 current = head;
+            Node1 prev = null;
+            while (current != null && current.id < id) {
+                prev = current;
+                current = current.next;
+            }
+
+            if (prev == null) {
+                newnft.next = head;
+                head = newnft;
+            } else {
+                newnft.next = current;
+                prev.next = newnft;
+            }
+        }
+    }
+
+    int generateRandomId() {
+        Random random = new Random();
+        int id = random.nextInt(10000); // Generate a random ID between 0 and 9999
+        // Check for duplicates (can be improved for efficiency)
+        Node1 current = head;
+        while (current != null) {
+            if (current.id == id) {
+                return generateRandomId(); // Regenerate if duplicate found
+            }
+            current = current.next;
+        }
+        return id;
+    }
+
+    void shownft() {
+        Node1 current = head;
+        int rand;
+        Random random = new Random();
+        rand = random.nextInt(500);
+        while (current != null) {
+            System.out.println("------NFT#" + rand + "-------------");
+            System.out.println("NFT NAME:" + current.name);
+            System.out.println("NFT PRICE:" + current.price);
+            System.out.println("NFT ID:" + current.id);
+            System.out.println("-----------------------------");
+            current = current.next;
+            rand = random.nextInt(500);
+        }
+    }
+
+    // Binary search to find NFT by name
+    Node1 searchByName(String name) {
+        if (head == null) {
+            return null; // No NFTs in the list
+        }
+
+        Node1 left = head;
+        Node1 right = head;
+
+        while (left != null && right != null && left != right.next) {
+            Node1 mid = getMidNode(left, right);
+            int cmp = name.compareTo(mid.name);
+
+            if (cmp == 0) {
+                return mid; // Found NFT by name
+            } else if (cmp < 0) {
+                right = mid; // Search left half
+            } else {
+                left = mid.next; // Search right half
+            }
+        }
+
+        return null; // NFT not found by name
+    }
+
+    // Binary search to find NFT by ID (assuming sorted linked list)
+    Node1 searchById(int id) {
+        if (head == null) {
+            return null; // No NFTs in the list
+        }
+
+        Node1 left = head;
+        Node1 right = head;
+
+        while (left != null && right != null && left != right.next) {
+            Node1 mid = getMidNode(left, right);
+
+            if (id == mid.id) {
+                return mid; // Found NFT by ID
+            } else if (id < mid.id) {
+                right = mid; // Search left half
+            } else {
+                left = mid.next; // Search right half
+            }
+        }
+
+        return null; // NFT not found by ID
+    }
+
+    // Helper method to find the middle node in a linked list
+    private Node1 getMidNode(Node1 left, Node1 right) {
+        if (left == null || right == null) {
+            return null;
+        }
+
+        Node1 slow = left;
+        Node1 fast = left;
+
+        while (fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+
+        return slow;
+    }
+
+    public static void main() {
+        Scanner scan = new Scanner(System.in);
+        int x = 0;
+        listing list1 = new listing();
+        while (x < 1) {
+            System.out.println("A. ADD NFT");
+            System.out.println("B. SHOW NFT");
+            System.out.println("C. SEARCH BY NAME");
+            System.out.println("D. SEARCH BY ID");
+            System.out.println("E. EXIT");
+            System.out.println("Enter choice:");
+            String choice = scan.next();
+
+            switch (choice) {
+                case "A":
+                    list1.addnft();
+                    break;
+                case "B":
+                    list1.shownft();
+                    break;
+                case "C":
+                    System.out.println("Enter NFT name to search:");
+                    String searchName = scan.next();
+                    Node1 foundByName = list1.searchByName(searchName);
+                    if (foundByName != null) {
+                        System.out.println("NFT Found:");
+                        System.out.println("NFT NAME:" + foundByName.name);
+                        System.out.println("NFT PRICE:" + foundByName.price);
+                        System.out.println("NFT ID:" + foundByName.id);
+                    } else {
+                        System.out.println("NFT not found by name.");
+                    }
+                    break;
+                case "D":
+                    System.out.println("Enter NFT ID to search:");
+                    int searchId = scan.nextInt();
+                    Node1 foundById = list1.searchById(searchId);
+                    if (foundById != null) {
+                        System.out.println("NFT Found:");
+                        System.out.println("NFT NAME:" + foundById.name);
+                        System.out.println("NFT PRICE:" + foundById.price);
+                        System.out.println("NFT ID:" + foundById.id);
+                    } else {
+                        System.out.println("NFT not found by ID.");
+                    }
+                    break;
+                case "E":
+                    x++;
+                    break;
+                default:
+                    System.out.println("Invalid choice");
+            }
+        }
+    }
+}
